@@ -146,7 +146,7 @@ library(tidyverse)
 library(googlesheets4)
 library(leaflet)
 
-# gs4_deauth() # if the authentication is not working for you
+gs4_deauth() # if the authentication is not working for you
 
 places <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479",
                      range = "SA2025",
@@ -165,4 +165,26 @@ leaflet() %>%
 # The googlesheet is at https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit#gid=1817942479
 
 #########################################################
+
+places_26 <- read_sheet("https://docs.google.com/spreadsheets/d/1PlxsPElZML8LZKyXbqdAYeQCDIvDps2McZx1cTVWSzI/edit?usp=sharing",
+                     range = "SA2026",
+                     col_types = "cccnncnc")
+
+places_26 <- places_26 %>%
+  filter(!is.na(Latitude) & !is.na(Longitude))
+
+glimpse(places_26)
+leaflet() %>% 
+  addTiles() %>% 
+  addMarkers(lng = places_26$Longitude, 
+             lat = places_26$Latitude,
+             popup = places_26$Description) %>%
+  setView(9.5549, 56.1764, zoom = 6) %>%
+  addProviderTiles("Esri.WorldImagery", group = "Aerial") %>%
+  addProviderTiles("Esri.WorldPhysical", group = "Physical") %>%
+  addProviderTiles("MtbMap", group = "Geo") %>% 
+  
+addLayersControl(
+    baseGroups = c("Geo","Aerial", "Physical"),
+    options = layersControlOptions(collapsed = T))
 
